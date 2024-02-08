@@ -22,6 +22,7 @@ const (
 // Config holds the configuration parameters for the HTTP client.
 type Config struct {
 	ProxyAddr    string
+	ProxyURL    string
 	UserAgent    string
 	AuthType     int
 	Username     string
