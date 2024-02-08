@@ -1,6 +1,6 @@
 // auth.go
 
-package pst
+package pst-lib
 
 import (
 	"crypto/md5"
