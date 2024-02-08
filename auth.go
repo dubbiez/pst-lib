@@ -16,9 +16,9 @@ import (
 
 // Constants related to authentication.
 const (
-	unknownAuthType int = iota
-	basicAuthType
-	digestAuthType
+	UnknownAuthType int = iota
+	BasicAuthType
+	DigestAuthType
 
 	proxyAuthorizationHeader = "Proxy-Authorization"
 	proxyAuthenticateHeader  = "Proxy-Authenticate"

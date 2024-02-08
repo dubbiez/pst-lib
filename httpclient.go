@@ -30,8 +30,8 @@ type Config struct {
 	MaxRedirects int
 }
 
-// makeHTTPClient initializes and returns a new HTTP client configured with a proxy and custom dialer.
-func makeHTTPClient(cfg *Config) *http.Client {
+// MakeHTTPClient initializes and returns a new HTTP client configured with a proxy and custom dialer.
+func MakeHTTPClient(cfg *Config) *http.Client {
 	proxyURL, err := url.Parse(cfg.ProxyAddr)
 	if err != nil {
 		log.Fatalf("Error parsing proxy URL: %v", err)
