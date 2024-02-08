@@ -1,6 +1,6 @@
 // httpclient.go
 
-package pstlib
+package main
 
 import (
 	"log"

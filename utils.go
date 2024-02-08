@@ -1,9 +1,10 @@
 // utils.go
 
-package pstlib
+package main
 
 import (
 	"io"
+	"net/url"
 	"net/http"
 	"os"
 )
