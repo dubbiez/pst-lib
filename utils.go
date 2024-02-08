@@ -1,6 +1,6 @@
 // utils.go
 
-package main
+package pstlib
 
 import (
 	"io"
