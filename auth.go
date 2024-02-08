@@ -9,8 +9,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/http"
-	"regexp"
-	"strconv"
+	//"regexp"  // Unused
+	//"strconv"  // Unused
 	"strings"
 )
 
