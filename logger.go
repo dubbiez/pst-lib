@@ -1,6 +1,6 @@
 // logger.go
 
-package pst-lib
+package pstlib
 
 import (
 	"log"
