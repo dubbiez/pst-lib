@@ -1,4 +1,4 @@
- // auth.go
+// auth.go
 
 package pstlib
 
@@ -9,8 +9,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/http"
-	//"regexp"  // Unused
-	//"strconv"  // Unused
 	"strings"
 )
 
@@ -45,11 +43,11 @@ type digestAuthData struct {
 func addBasicAuthHeader(req *http.Request, userData *proxyUserAuthData) {
 	auth := userData.username + ":" + userData.password
 	basicAuth := "Basic " + base64.StdEncoding.EncodeToString([]byte(auth))
-	req.Header.Add(proxyAuthorizationHeader, basicAuth)
+	req.Header.Set(proxyAuthorizationHeader, basicAuth)
 }
 
 // addDigestAuthHeader adds a digest authorization header to the request.
-func addDigestAuthHeader(req *http.Request, userData *proxyUserAuthData, digestData *digestAuthData, method string, uri string) {
+func addDigestAuthHeader(req *http.Request, userData *proxyUserAuthData, digestData *digestAuthData, method string, uri string) error {
 	ha1 := getMD5Hash(userData.username + ":" + digestData.realm + ":" + userData.password)
 	ha2 := getMD5Hash(method + ":" + uri)
 	nonceCount := fmt.Sprintf("%08x", digestData.nc)
@@ -59,11 +57,12 @@ func addDigestAuthHeader(req *http.Request, userData *proxyUserAuthData, digestD
 	authHeader := fmt.Sprintf(`Digest username="%s", realm="%s", nonce="%s", uri="%s", qop=%s, nc=%s, cnonce="%s", response="%s", opaque="%s", algorithm=%s`,
 		userData.username, digestData.realm, digestData.nonce, uri, digestData.qop, nonceCount, digestData.cnonce, response, digestData.opaque, digestData.algorithm)
 
-	req.Header.Add(proxyAuthorizationHeader, authHeader)
+	req.Header.Set(proxyAuthorizationHeader, authHeader)
+	return nil
 }
 
 // getDigestAuthData parses the 'Proxy-Authenticate' header to extract digest auth details.
-func getDigestAuthData(h string) *digestAuthData {
+func getDigestAuthData(h string) (*digestAuthData, error) {
 	result := &digestAuthData{}
 	for _, token := range strings.Split(h, ",") {
 		token = strings.Trim(token, " ")
@@ -79,8 +78,12 @@ func getDigestAuthData(h string) *digestAuthData {
 			result.algorithm = strings.Trim(token[10:], `"`)
 		}
 	}
-	result.cnonce = makeRandomString(8)
-	return result
+	var err error
+	result.cnonce, err = makeRandomString(8)
+	if err != nil {
+		return nil, fmt.Errorf("error generating cnonce: %w", err)
+	}
+	return result, nil
 }
 
 // getMD5Hash returns the MD5 hash of the input string.
@@ -91,14 +94,14 @@ func getMD5Hash(text string) string {
 }
 
 // makeRandomString generates a random string of specified length.
-func makeRandomString(length int) string {
+func makeRandomString(length int) (string, error) {
 	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, length)
 	if _, err := rand.Read(b); err != nil {
-		panic(err)
+		return "", err
 	}
 	for i := 0; i < length; i++ {
 		b[i] = chars[int(b[i])%len(chars)]
 	}
-	return string(b)
+	return string(b), nil
 }
