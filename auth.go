@@ -1,4 +1,4 @@
-// auth.go
+ // auth.go
 
 package pstlib
 
